@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Gradient background */
+            color: #333;
+            padding: 20px;
+            background-attachment: fixed; /* Keep background fixed on scroll */
+        }
+        header {
+            background-color: rgba(51, 51, 51, 0.9); /* Semi-transparent background */
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 10px; /* Rounded corners */
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        .filter-section {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Space between elements */
+        }
+        .filter-section label {
+            margin-right: 10px;
+        }
+        .filter-section input[type="date"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: border-color 0.3s ease;
+        }
+        .filter-section input[type="date"]:focus {
+            border-color: #007bff; /* Blue border on focus */
+            outline: none; /* Remove default outline */
+        }
+        .filter-section button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .filter-section button:hover {
+            background-color: #0056b3;
+        }
+        .post-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .post-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 350px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        .post-card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .post-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .post-card p {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .post-card a {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .post-card a:hover {
+            background-color: #0056b3;
+        }
+        .comment-section {
+            margin-top: 40px;
+        }
+        .comment-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .comment-list {
+            margin-bottom: 20px;
+        }
+        .comment {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+        form textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        form button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        form button:hover {
+            background-color: #218838;
+        }
+        /* Add New Post Button Styling */
+        .add-post-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4caf50; /* Green color */
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            text-align: center;
+        }
+        .add-post-btn:hover {
+            background-color: #388e3c; /* Darker green on hover */
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        /* Back to Home Button */
+        .back-home-btn {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .back-home-btn:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>{{ title }}</h1>
+</header>
+
+<div class="container">
+    <div class="filter-section">
+        <form method="GET" action="{{ url_for('filter_posts') }}">
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" required>
+            <label for="end_date">End Date:</label>
+            <input type="date" name="end_date" required>
+            <button type="submit">Filter Posts</button>
+        </form>
+    </div>
+
+    {% if page == 'index' %}
+        <!-- Blog Home Page - Display all Posts -->
+        <div class="post-list">
+            {% for post in posts %}
+                <div class="post-card">
+                    <h2>{{ post.title }}</h2>
+                    <p>{{ post.content[:150] }}...</p>
+                    <a href="{{ url_for('post_detail', post_id=post.id) }}">Read More</a>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Add New Post Button -->
+        <a href="{{ url_for('add_post') }}" class="add-post-btn">Add New Post</a>
+
+    {% elif page == 'post_detail' %}
+        <!-- Single Post Page with Comments -->
+        <div class="post-card">
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content }}</p>
+        </div>
+
+        <div class="comment-section">
+            <h3>Comments:</h3>
+            <div class="comment-list">
+                {% for comment in comments %}
+                    <div class="comment">
+                        <p>{{ comment.content }}</p>
+                        <span>{{ comment.date }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <h3>Add a Comment:</h3>
+            <form method="POST">
+                <textarea name="comment" required></textarea>
+                <button type="submit">Add Comment</button>
+            </form>
+        </div>
+        <a href="{{ url_for('index') }}" class="back-home-btn">Back to Home</a>
+
+    {% elif page == 'add_post' %}
+        <!-- Add New Post Page -->
+        <div class="post-card">
+            <h2>Add a New Blog Post</h2>
+            <form method="POST">
+                <label for="title">Title:</label>
+                <input type="text" name="title" id="title" required>
+                <label for="content">Content:</label>
+                <textarea name="content" id="content" required></textarea>
+                <button type="submit">Add Post</button>
+            </form>
+            <a href="{{ url_for('index') }}" class="back-home-btn">Back to Home</a>
+        </div>
+    {% endif %}
+</div>
+</body>
+</html>
